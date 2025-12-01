@@ -70,8 +70,87 @@ section h3 {
   color: #0066cc;
 }
 
-.activity-card p {
+/* New styles: participants section inside an activity card */
+.activity-card .participants-section {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #eee;
+}
+
+.activity-card .participants-section h5 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.activity-card .participants-list {
+  list-style: disc;
+  margin-left: 18px;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
+  max-height: 140px;
+  overflow-y: auto;
+  box-shadow: 0 1px 2px rgba(25, 25, 25, 0.03);
+}
+
+.activity-card .participants-list li {
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1f2937;
+  font-size: 14px;
+  /* make room for a custom bullet */
+  padding-left: 6px;
+  position: relative;
+}
+
+/* show a light, consistent bullet even while using flex layout */
+.activity-card .participants-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #cbd5e1;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Small circular avatar with initials */
+.activity-card .participant-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e6eeff;
+  color: #1a237e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  flex: 0 0 30px;
+  border: 1px solid rgba(26, 35, 126, 0.06);
+}
+
+/* email / name cell */
+.activity-card .participant-email {
+  color: #2b3440;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+/* Empty state when no participants */
+.activity-card .participants-empty {
+  font-style: italic;
+  color: #6b7280;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px dashed #f1f5f9;
 }
 
 .form-group {
