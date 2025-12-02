@@ -53,9 +53,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const emailSpan = document.createElement("span");
             emailSpan.className = "participant-email";
             emailSpan.textContent = email;
+            // delete button for unregistering
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "participant-delete";
+            deleteBtn.title = "Unregister participant";
+            deleteBtn.setAttribute("aria-label", "Unregister participant");
+            deleteBtn.textContent = "✕";
+            // store identifying info on the button so handlers can pick it up
+            deleteBtn.dataset.activity = name;
+            deleteBtn.dataset.email = email;
 
             li.appendChild(avatar);
             li.appendChild(emailSpan);
+            li.appendChild(deleteBtn);
             list.appendChild(li);
           });
           participantsSection.appendChild(list);
@@ -126,8 +136,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const emailSpan = document.createElement("span");
     emailSpan.className = "participant-email";
     emailSpan.textContent = email;
+    // add delete button when we dynamically append a new participant
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "participant-delete";
+    deleteBtn.title = "Unregister participant";
+    deleteBtn.setAttribute("aria-label", "Unregister participant");
+    deleteBtn.textContent = "✕";
+    deleteBtn.dataset.activity = activityName;
+    deleteBtn.dataset.email = email;
+
     li.appendChild(avatar);
     li.appendChild(emailSpan);
+    li.appendChild(deleteBtn);
     list.appendChild(li);
   }
 
@@ -193,5 +213,53 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Initialize app
+  // Event delegation for participant delete events
+  activitiesList.addEventListener("click", async (event) => {
+    const button = event.target.closest(".participant-delete");
+    if (!button) return;
+
+    const activity = button.dataset.activity;
+    const email = button.dataset.email;
+    if (!activity || !email) return;
+
+    // quick UI feedback
+    button.disabled = true;
+    const previousText = button.textContent;
+    button.textContent = "...";
+
+    try {
+      const response = await fetch(
+        `/activities/${encodeURIComponent(activity)}/participants?email=${encodeURIComponent(email)}`,
+        { method: "DELETE" }
+      );
+      const result = await response.json();
+
+      if (response.ok) {
+        // remove the row from DOM and show a message
+        const row = button.closest("li");
+        if (row) row.remove();
+        messageDiv.textContent = result.message || `Unregistered ${email} from ${activity}`;
+        messageDiv.className = "message success";
+        messageDiv.classList.remove("hidden");
+
+        // refresh activities from server for consistency
+        await fetchActivities();
+      } else {
+        messageDiv.textContent = result.detail || "Failed to unregister";
+        messageDiv.className = "message error";
+        messageDiv.classList.remove("hidden");
+      }
+    } catch (error) {
+      messageDiv.textContent = "Failed to unregister. Please try again.";
+      messageDiv.className = "message error";
+      messageDiv.classList.remove("hidden");
+      console.error("Error unregistering:", error);
+    } finally {
+      button.disabled = false;
+      button.textContent = previousText;
+      setTimeout(() => messageDiv.classList.add("hidden"), 5000);
+    }
+  });
+
   fetchActivities();
 });

@@ -85,8 +85,8 @@ section h3 {
 }
 
 .activity-card .participants-list {
-  list-style: disc;
-  margin-left: 18px;
+  list-style: none; /* hide default bullets */
+  margin-left: 0;
   padding: 8px 12px;
   background: linear-gradient(180deg, #ffffff, #fbfdff);
   border-radius: 6px;
@@ -109,15 +109,29 @@ section h3 {
 }
 
 /* show a light, consistent bullet even while using flex layout */
-.activity-card .participants-list li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #cbd5e1;
-  font-size: 18px;
+/* no custom bullet — we prefer a clean row with an inline delete button */
+
+.activity-card .participant-email {
+  color: #2b3440;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  flex: 1; /* allow email to take available space so delete sits right */
+}
+
+.activity-card .participant-delete {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  cursor: pointer;
+  font-size: 16px;
   line-height: 1;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.activity-card .participant-delete:hover {
+  background-color: rgba(198, 40, 40, 0.08);
 }
 
 /* Small circular avatar with initials */
