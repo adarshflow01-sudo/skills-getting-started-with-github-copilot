@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
-      const response = await fetch("/activities");
+      // don't use cached responses so the UI always reflects the server state
+      const response = await fetch("/activities", { cache: "no-store" });
       const activities = await response.json();
 
       // Clear loading message and reset options
@@ -130,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const li = document.createElement("li");
+    li.className = "participant-row";
     const avatar = document.createElement("span");
     avatar.className = "participant-avatar";
     avatar.textContent = getInitials(email);
@@ -186,8 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.className = "message success";
         signupForm.reset();
 
-        // Update UI immediately and refresh from server to keep in-memory data consistent
-        appendParticipantToCard(activity, email);
+        // Refresh from the server so what we render comes directly from the authoritative source
+        // (avoid relying on a local DOM append which can become inconsistent)
         await fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
